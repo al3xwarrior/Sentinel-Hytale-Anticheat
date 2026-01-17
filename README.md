@@ -35,7 +35,7 @@ Default config:
   "punishments": {
     "reason": "[Anticheat] Cheating",
     "shouldBan": false,
-    "maxFlags": 150
+    "maxFlags": 500
   }
 }
 ```
