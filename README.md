@@ -1,5 +1,8 @@
 # HytaleAC
 
+## Showcase video
+YouTube showcase + explanation: (link coming soon)
+
 The first (that I know of) public Hytale anticheat plugin focused on timer-based movement/interaction checks with staff alerts and recent flag logs.
 
 ## Current Checks
@@ -9,6 +12,7 @@ The first (that I know of) public Hytale anticheat plugin focused on timer-based
 ## Features
 - Staff Alerts in Chat
 - Optional Discord Webhook Alerts
+- Optional automatic punishments (disconnect/ban) at high flag counts
 
 ## Configuration
 The config file is created in the plugin data directory on first run (located in `mods/Al3x_HytaleAC/config.json`).
@@ -27,6 +31,11 @@ Default config:
     "notifyReset": true,
     "debugMode": false,
     "discordWebhookUrl": ""
+  },
+  "punishments": {
+    "reason": "[Anticheat] Cheating",
+    "shouldBan": false,
+    "maxFlags": 150
   }
 }
 ```
@@ -43,9 +52,15 @@ Config options:
 | `alerts.notifyReset` | boolean | `true` | If `true`, notifies staff members when flags are reset.                    |
 | `alerts.debugMode` | boolean | `false` | If `true`, prints debug output to the server console for different checks. |
 | `alerts.discordWebhookUrl` | string | `""` | Discord webhook URL for alert embeds; leave empty to disable.              |
+| `punishments.reason` | string | `"[Anticheat] Cheating"` | Reason used for disconnects/bans and punishment webhooks.                  |
+| `punishments.shouldBan` | boolean | `false` | If `true`, bans instead of disconnecting when punishments trigger.         |
+| `punishments.maxFlags` | int | `150` | Total flags required before punishments trigger.                            |
 
 ## Webhook alerts
-If `alerts.discordWebhookUrl` is set, staff alerts also post to Discord. Alerts are rate-limited to once per second.
+If `alerts.discordWebhookUrl` is set, staff alerts and punishment actions also post to Discord. Alerts are rate-limited to once per second.
+
+## Punishments
+When a player reaches `punishments.maxFlags` total flags, the plugin will disconnect them by default and send a punishment webhook. If `punishments.shouldBan` is `true`, it will issue an infinite ban instead.
 
 ## Commands
 

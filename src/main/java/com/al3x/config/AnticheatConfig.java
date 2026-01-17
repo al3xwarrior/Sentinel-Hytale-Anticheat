@@ -28,6 +28,7 @@ public final class AnticheatConfig {
 
     private static String punishmentReason = "[Anticheat] Cheating";
     private static boolean shouldBan = false;
+    private static int punishmentMaxFlags = 150;
 
     private AnticheatConfig() {}
 
@@ -91,6 +92,7 @@ public final class AnticheatConfig {
 
         punishmentReason = data.punishments.reason;
         shouldBan = data.punishments.shouldBan;
+        punishmentMaxFlags = data.punishments.maxFlags;
     }
 
     private static void save(JavaPlugin plugin, Path path, Data data) {
@@ -142,6 +144,10 @@ public final class AnticheatConfig {
         return shouldBan;
     }
 
+    public static int getPunishmentMaxFlags() {
+        return punishmentMaxFlags;
+    }
+
     private static final class Data {
         private Timer timer = new Timer();
         private Alerts alerts = new Alerts();
@@ -165,5 +171,6 @@ public final class AnticheatConfig {
     private static final class Punishments {
         private String reason = "[Anticheat] Cheating";
         private boolean shouldBan = false;
+        private int maxFlags = 150;
     }
 }
