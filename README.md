@@ -24,7 +24,7 @@ Default config:
     "enabled": true,
     "minMsInteractionPacket": 10,
     "minNanoMovementPacket": 15000000.0,
-    "maxFlags": 30
+    "maxFlags": 45
   },
   "alerts": {
     "resetIntervalSeconds": 60,
