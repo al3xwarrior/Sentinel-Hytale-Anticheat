@@ -63,7 +63,7 @@ public class PlayerHelper {
         world.execute(() -> {
             if (player.getReference() == null) return;
             Store<EntityStore> store = player.getReference().getStore();
-            Teleport teleport = new Teleport(new Transform(x, y, z));
+            Teleport teleport = Teleport.createForPlayer(new Transform(x, y, z));
             store.addComponent(player.getReference(), Teleport.getComponentType(), teleport);
         });
     }

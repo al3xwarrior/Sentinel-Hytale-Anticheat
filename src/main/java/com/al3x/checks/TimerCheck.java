@@ -46,7 +46,7 @@ public class TimerCheck {
                     syncPacketTimestamps.put(playerUUID, currentTime);
 
                     // Ignore if time difference is 0 (happens when tabbing out while swinging and possibly other things)
-                    if (timeDifference == 0) return false;
+                    if (timeDifference == 0 || timeDifference == 1) return false;
 
                     // (The big IF statement)
                     int thresholdMs = AnticheatConfig.getTimerMinMsInteractionPacket();

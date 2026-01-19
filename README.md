@@ -1,4 +1,4 @@
-# HytaleAC
+# Sentinel
 
 ## Showcase video
 YouTube showcase + explanation: (link coming soon)
@@ -24,7 +24,7 @@ Default config:
     "enabled": true,
     "minMsInteractionPacket": 10,
     "minNanoMovementPacket": 15000000.0,
-    "maxFlags": 45
+    "maxFlags": 75
   },
   "alerts": {
     "resetIntervalSeconds": 60,
@@ -35,26 +35,26 @@ Default config:
   "punishments": {
     "reason": "[Anticheat] Cheating",
     "shouldBan": false,
-    "maxFlags": 500
+    "maxFlags": 1000
   }
 }
 ```
 
 Config options:
 
-| Path | Type | Default | Description                                                                |
-| --- | --- | --- |----------------------------------------------------------------------------|
-| `timer.enabled` | boolean | `true` | Enables or disables the timer check entirely.                              |
-| `timer.minMsInteractionPacket` | int | `10` | Minimum milliseconds between interaction packets before flagging.          |
-| `timer.minNanoMovementPacket` | number | `15000000.0` | Minimum average nanoseconds between movement packets before flagging.      |
-| `timer.maxFlags` | int | `30` | Flags required before sending an alert.                                    |
-| `alerts.resetIntervalSeconds` | int | `60` | Interval in seconds to clear player flags.                                 |
-| `alerts.notifyReset` | boolean | `true` | If `true`, notifies staff members when flags are reset.                    |
-| `alerts.debugMode` | boolean | `false` | If `true`, prints debug output to the server console for different checks. |
-| `alerts.discordWebhookUrl` | string | `""` | Discord webhook URL for alert embeds; leave empty to disable.              |
+| Path | Type | Default                  | Description                                                                |
+| --- | --- |--------------------------|----------------------------------------------------------------------------|
+| `timer.enabled` | boolean | `true`                   | Enables or disables the timer check entirely.                              |
+| `timer.minMsInteractionPacket` | int | `10`                     | Minimum milliseconds between interaction packets before flagging.          |
+| `timer.minNanoMovementPacket` | number | `15000000.0`             | Minimum average nanoseconds between movement packets before flagging.      |
+| `timer.maxFlags` | int | `75`                     | Flags required before sending an alert.                                    |
+| `alerts.resetIntervalSeconds` | int | `60`                     | Interval in seconds to clear player flags.                                 |
+| `alerts.notifyReset` | boolean | `true`                   | If `true`, notifies staff members when flags are reset.                    |
+| `alerts.debugMode` | boolean | `false`                  | If `true`, prints debug output to the server console for different checks. |
+| `alerts.discordWebhookUrl` | string | `""`                     | Discord webhook URL for alert embeds; leave empty to disable.              |
 | `punishments.reason` | string | `"[Anticheat] Cheating"` | Reason used for disconnects/bans and punishment webhooks.                  |
-| `punishments.shouldBan` | boolean | `false` | If `true`, bans instead of disconnecting when punishments trigger.         |
-| `punishments.maxFlags` | int | `150` | Total flags required before punishments trigger.                            |
+| `punishments.shouldBan` | boolean | `false`                  | If `true`, bans instead of disconnecting when punishments trigger.         |
+| `punishments.maxFlags` | int | `1000`                   | Total flags required before punishments trigger.                            |
 
 ## Webhook alerts
 If `alerts.discordWebhookUrl` is set, staff alerts and punishment actions also post to Discord. Alerts are rate-limited to once per second.

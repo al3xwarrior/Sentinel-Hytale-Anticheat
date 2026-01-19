@@ -18,7 +18,7 @@ public final class AnticheatConfig {
     private static boolean timerEnabled = true;
     private static int timerMinMsInteractionPacket = 10;
     private static double timerMinNanoMovementPacket = 15000000.0;
-    private static int timerMaxFlags = 45;
+    private static int timerMaxFlags = 75;
 
     private static boolean alertNotifyReset = true;
     private static int alertResetIntervalSeconds = 60;
@@ -28,7 +28,7 @@ public final class AnticheatConfig {
 
     private static String punishmentReason = "[Anticheat] Cheating";
     private static boolean shouldBan = false;
-    private static int punishmentMaxFlags = 500;
+    private static int punishmentMaxFlags = 1000;
 
     private AnticheatConfig() {}
 
@@ -158,7 +158,7 @@ public final class AnticheatConfig {
         private boolean enabled = true;
         private int minMsInteractionPacket = 10;
         private double minNanoMovementPacket = 15000000.0;
-        private int maxFlags = 45;
+        private int maxFlags = 75;
     }
 
     private static final class Alerts {
@@ -171,6 +171,6 @@ public final class AnticheatConfig {
     private static final class Punishments {
         private String reason = "[Anticheat] Cheating";
         private boolean shouldBan = false;
-        private int maxFlags = 500;
+        private int maxFlags = 1000;
     }
 }
