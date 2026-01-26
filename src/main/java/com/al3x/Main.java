@@ -1,40 +1,52 @@
 package com.al3x;
 
+import com.al3x.checks.FlyCheck;
+import com.al3x.checks.InfStaminaCheck;
+import com.al3x.checks.SpeedCheck;
 import com.al3x.checks.TimerCheck;
 import com.al3x.commands.AlertsCommand;
 import com.al3x.commands.AnticheatCommand;
 import com.al3x.commands.LogsCommand;
 import com.al3x.config.AnticheatConfig;
+import com.hypixel.hytale.protocol.packets.connection.Ping;
+import com.hypixel.hytale.protocol.packets.player.ClientMovement;
 import com.hypixel.hytale.server.core.HytaleServer;
+import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.event.events.player.PlayerConnectEvent;
 import com.hypixel.hytale.server.core.event.events.player.PlayerDisconnectEvent;
+import com.hypixel.hytale.server.core.io.adapter.PacketAdapters;
+import com.hypixel.hytale.server.core.io.adapter.PlayerPacketFilter;
 import com.hypixel.hytale.server.core.modules.accesscontrol.AccessControlModule;
 import com.hypixel.hytale.server.core.modules.accesscontrol.provider.HytaleBanProvider;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
-import io.netty.util.internal.ReflectionUtil;
 
 import javax.annotation.Nonnull;
+import java.awt.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class Main extends JavaPlugin {
 
     private TimerCheck timerCheck;
+    private FlyCheck flyCheck;
+    private SpeedCheck speedCheck;
+    private InfStaminaCheck infStaminaCheck;
 
-    private final ArrayList<AnticheatPlayer> anticheatPlayers;
+    private final ConcurrentHashMap<UUID, AnticheatPlayer> anticheatPlayers;
     private final StaffManager staffManager;
     private ScheduledFuture<?> flagResetTask;
     private HytaleBanProvider banProvider;
 
     public Main(@Nonnull JavaPluginInit init) {
         super(init);
-        this.anticheatPlayers = new ArrayList<>();
+        this.anticheatPlayers = new ConcurrentHashMap<>();
         this.staffManager = new StaffManager();
     }
 
@@ -45,39 +57,43 @@ public class Main extends JavaPlugin {
         this.getCommandRegistry().registerCommand(new AnticheatCommand(this));
         this.getCommandRegistry().registerCommand(new LogsCommand(this));
 
-        this.banProvider = getPublic(HytaleBanProvider.class, AccessControlModule.get(), "banProvider");
+        this.banProvider = getPublic(AccessControlModule.get(), "banProvider");
         if (banProvider == null) throw new RuntimeException("Could not find Hytale Access Control Module");
 
         // Add Anticheat Player on Connect and Remove on Disconnect + Give Staff Alert Permission
         this.getEventRegistry().registerGlobal(PlayerConnectEvent.class, (event) -> {
             PlayerRef playerRef = event.getPlayerRef();
             Player player = playerRef.getComponent(Player.getComponentType());
-            anticheatPlayers.add(new AnticheatPlayer(this, playerRef));
+            if (player == null) return;
+            anticheatPlayers.put(playerRef.getUuid(), new AnticheatPlayer(this, playerRef));
             if (player.hasPermission("hytaleac.alerts")) {
                 staffManager.addAlertUser(playerRef.getUuid());
             }
         });
         this.getEventRegistry().registerGlobal(PlayerDisconnectEvent.class, (event) -> {
             UUID uuid = event.getPlayerRef().getUuid();
-            anticheatPlayers.removeIf(acPlayer -> acPlayer.getUuid().equals(uuid));
+            anticheatPlayers.remove(uuid);
             timerCheck.removePlayer(uuid);
+            speedCheck.removePlayer(uuid);
+            infStaminaCheck.removePlayer(uuid);
+            staffManager.removeAlertUser(uuid);
         });
 
         // Register Checks
         timerCheck = new TimerCheck(this);
-
+        flyCheck = new FlyCheck(this);
+        speedCheck = new SpeedCheck(this);
+        infStaminaCheck = new InfStaminaCheck(this);
         timerCheck.register();
+        flyCheck.register();
+        speedCheck.register();
+        infStaminaCheck.register();
 
         scheduleFlagReset();
     }
 
     public AnticheatPlayer getAnticheatPlayer(UUID uuid) {
-        for (AnticheatPlayer acPlayer : anticheatPlayers) {
-            if (acPlayer.getUuid().equals(uuid)) {
-                return acPlayer;
-            }
-        }
-        return null;
+        return anticheatPlayers.getOrDefault(uuid, null);
     }
 
     public StaffManager getStaffManager() {
@@ -99,15 +115,14 @@ public class Main extends JavaPlugin {
             return;
         }
         flagResetTask = HytaleServer.SCHEDULED_EXECUTOR.scheduleAtFixedRate(() -> {
-            anticheatPlayers.forEach(AnticheatPlayer::resetFlags);
-            if (AnticheatConfig.isAlertNotifyReset()) {
+            anticheatPlayers.forEach((uuid, acPlayer) -> acPlayer.resetFlags());
+            if (AnticheatConfig.isAlertNotifyReset())
                 staffManager.alertViolationsReset();
-            }
         }, intervalSeconds, intervalSeconds, TimeUnit.SECONDS);
     }
 
     // Credits to buuz135 for this reflection method
-    public <T> T getPublic(Class<T> classZ, Object object, String fieldName) {
+    public <T> T getPublic(Object object, String fieldName) {
         try {
             Field field = object.getClass().getDeclaredField(fieldName);
             field.setAccessible(true);

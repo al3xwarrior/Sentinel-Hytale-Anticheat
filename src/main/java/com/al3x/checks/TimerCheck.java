@@ -14,13 +14,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TimerCheck {
 
     private final Main main;
 
     // Movement Packet Timestamps
-    private final Map<UUID, Long> lastPacketNs = new HashMap<>(); // last packet time in nanoseconds
+    private final ConcurrentHashMap<UUID, Long> lastPacketNs = new ConcurrentHashMap<>(); // last packet time in nanoseconds
     private final Map<UUID, ArrayList<Long>> recentTimeDifferences = new HashMap<>(); // used for averaging
 
     // Interaction Packet Timestamps
@@ -50,12 +51,13 @@ public class TimerCheck {
 
                     // (The big IF statement)
                     int thresholdMs = AnticheatConfig.getTimerMinMsInteractionPacket();
-                    int maxFlags = AnticheatConfig.getTimerMaxFlags();
+
                     if (timeDifference < thresholdMs) {
                         AnticheatPlayer acPlayer = main.getAnticheatPlayer(playerUUID);
                         if (AnticheatConfig.isDebugMode())
-                            System.out.println("[TimerCheck] " + playerRef.getUsername() + " - Time Difference" + timeDifference + " - Source: Movement Packet");
+                            System.out.println("[TimerCheck] " + playerRef.getUsername() + " - Time Difference" + timeDifference + " - Source: Interaction Packet");
                         if (acPlayer == null) return false;
+                        int maxFlags = AnticheatConfig.getTimerFlagsNeededToAlert();
                         acPlayer.flagPlayer(new TimerFlag(timeDifference, TimerFlag.SourceType.INTERACTION_PACKET, maxFlags));
                     }
                 } else {
@@ -92,7 +94,7 @@ public class TimerCheck {
                     if (AnticheatConfig.isDebugMode())
                         System.out.println("[TimerCheck] " + playerRef.getUsername() + " - Avg MS: " + round3((double) average / 1000000) + " - Source: Movement Packet");
                     if (acPlayer == null) return false;
-                    acPlayer.flagPlayer(new TimerFlag((long) round3((double) average / 1000000), TimerFlag.SourceType.MOVEMENT_PACKET, AnticheatConfig.getTimerMaxFlags()));
+                    acPlayer.flagPlayer(new TimerFlag((long) round3((double) average / 1000000), TimerFlag.SourceType.MOVEMENT_PACKET, AnticheatConfig.getTimerFlagsNeededToAlert()));
                 }
             }
 

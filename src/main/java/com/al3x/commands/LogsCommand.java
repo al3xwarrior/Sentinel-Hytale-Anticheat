@@ -19,6 +19,7 @@ import com.hypixel.hytale.server.core.universe.Universe;
 import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class LogsCommand extends CommandBase {
@@ -55,7 +56,7 @@ public class LogsCommand extends CommandBase {
             return;
         }
 
-        ArrayList<Flag> flags = acPlayer.getFlags();
+        List<Flag> flags = acPlayer.getFlags();
         if (flags.isEmpty()) {
             commandContext.sendMessage(Message.join(
                     Message.raw("[Anticheat] ").color(Color.RED),

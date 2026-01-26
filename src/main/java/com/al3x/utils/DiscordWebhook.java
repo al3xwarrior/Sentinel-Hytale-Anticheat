@@ -82,7 +82,7 @@ public class DiscordWebhook {
     }
 
     public void setLastSendTime(int lastSendTime) {
-        this.lastSendTime = lastSendTime;
+        DiscordWebhook.lastSendTime = lastSendTime;
     }
 
     public static class DiscordMessage {

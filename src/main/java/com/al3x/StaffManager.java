@@ -9,14 +9,16 @@ import com.hypixel.hytale.server.core.universe.Universe;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class StaffManager {
 
-    private final ArrayList<UUID> alertUsers;
+    private final Set<UUID> alertUsers;
 
     public StaffManager() {
-        this.alertUsers = new ArrayList<>();
+        this.alertUsers = ConcurrentHashMap.newKeySet();
     }
 
     public void alert(AnticheatPlayer cheater, Flag flag) {
