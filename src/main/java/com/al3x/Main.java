@@ -48,6 +48,8 @@ public class Main extends JavaPlugin {
 
     @Override
     protected void setup() {
+        new HStats("d52fa672-6966-47b2-b501-1a11bddebac3", "1.2.1");
+
         AnticheatConfig.reload(this);
         this.getCommandRegistry().registerCommand(new AlertsCommand(staffManager));
         this.getCommandRegistry().registerCommand(new AnticheatCommand(this));
