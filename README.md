@@ -16,6 +16,8 @@ A Hytale server-side anticheat plugin focused on movement/interaction checks wit
 - Optional Discord Webhook Alerts
 - Optional automatic punishments (disconnect/ban) at high flag counts
 
+![HStats](https://api.hstats.dev/api/embed/d52fa672-6966-47b2-b501-1a11bddebac3/card.svg?theme=light&layout=compact&size=md&show_id=true&dark=false)
+
 ## Configuration
 The config file is created in the plugin data directory on first run (typically `mods/Al3x_HytaleAC/config.json`).
 
